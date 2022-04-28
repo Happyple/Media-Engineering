@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+		<title>雨哥说的队的大数据可视化</title>
+		<link rel="stylesheet" href="./css/index.css"/>
+	</head>
+	<body>
+		<!--标题的盒子-->
+		<header>
+			<h1>媒体工程学院18-21级学生基本数据可视化</h1>
+		</header>
+		<!--页面主体部分-->
+		<section class="mainbox">
+			<!--左边-->
+			<div class="column1">
+				<!--柱状图-->
+				<div class="panel">
+					<h2>18-21年各专业学生人数变化</h2>
+					<div class="chart" id="bar">图表</div>
+				</div>
+				<!--饼图-->
+				<div class="panel">
+					<h2>18-21级学生少数民族分布</h2>
+					<div class="chart" id="bing">图表</div>
+				</div>
+				<!--词云图-->
+				<div class="panel ci">
+					<h2>18-21级学生姓氏词云图</h2>
+					<div class="chart" id="ci">图表</div>
+				</div>
+			</div>
+			<!--中间-->
+			<div class="column2">
+				<!--地图-->
+				<div class="panel1 map">
+					<h2>18-21级学生籍贯省份分布图</h2>
+					<div class="chart1" id="map">图表</div>
+				</div>
+				<div class="panel1 gx">
+					<h2>18-21级辅导员班级关系图</h2>
+					<div class="chart1" id="gx">图表</div>
+				</div>
+			</div>
+
+		</section>
+		<section class="box">
+			<div class="intro">
+				<p id="title">统一主题、单页面、多图表</p>
+				<p id="content">一个主题：媒体工程学院18-21级学生基本数据可视化<br />
+				单页面：所有图表与介绍文本、图片放在单张web页面<br />
+				多图表：通过柱状图、饼状图、词云图、地图、关系图展示数据</p>
+				<p id="title">处理数据</p>
+				<p id="content">本次展示数据的数据来源是媒体工程学院18-21级学生的基本信息<br />
+				通过excel将所需要用到的各级各专业人数、籍贯省份统计、少数民族统计、姓氏统计、辅导员班主任信息提取出来<br />
+				再用python将xlsx转换成json文件<br />
+				代码如下</p>
+				<img src="img/ToJson.png" height="350px" width="800px" style="display: block; margin: auto;"><img />
+				<p id="title">可视化呈现</p>
+				<p id="content">通过柱状图更加直观地呈现各专业人数在18-21年的变化<br />
+				地图呈现的是媒体工程学院学生在各个省份的分布<br />
+				饼状图呈现的是媒体工程学院学生在各个少数民族的分布<br />
+				关系图呈现的是媒体工程学院的辅导员和班级及班主任的关系<br />
+				词云图呈现的是媒体工程学院学生的姓氏</p>
+				<p id="title">小组分工</p>
+				<p id="content">符慧颖：主要负责排除万难实现我们的重头——(简化版)关系图和词云图<br />
+				完成页面的基本布局，不断焦虑和催促什么时候可以完成期中作品<br />
+				赵瀚琳：主要负责收集数据，通过excel表格将相关数据筛选合并，<br />
+				然后再用非常复杂(bushi)的python将数据读入转成json<br />
+				然后再将我们的页面调整成现在这个好看的配色<br />
+				神秘嘉宾：此处特别感谢张老师和邱老师给我们提供的技术指导(当然还有伟大的互联网)</p>
+				<br />
+			</div>
+		</section>
+		<section class="box">
+			<p id="buttontitle"><span style="font-size: 30px;">“雨哥说的队”期中展示——190808118赵瀚琳(一班)，190808203符慧颖(二班)</span></p>
+		</section>
+		
+		<script src="js/flexible.js"></script><!-- 使盒子可以随页面大小变换而变换 -->
+		<script src="js/echarts.min.js"></script><!-- 包括所需图表工具的脚本 -->
+		<script src="js/echarts-wordcloud.min.js"></script><!-- 词云图所需要的js文件 -->
+		<script src="js/china.js"></script><!-- 地图界面所需要的js文件 -->
+		<script>
+			//初始化变量——柱状图
+			var myChart1 = echarts.init(document.getElementById('bar'));//柱状图
+			var option1 = {
+				tooltip: {
+				    trigger: 'axis',//触发方式
+				    axisPointer: {
+						// 坐标轴指示器，坐标轴触发有效
+						type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+				    }
+				},
+				//标签的设置
+				legend: {},
+				//修改图表的大小
+				grid: {
+				    left: '3%',
+				    right: '4%',
+				    bottom: '3%',
+				    containLabel: true//是否显示刻度标签
+				},
+				xAxis: {
+				    type: 'value',
+					lineStyle: {
+					    color: "rgba(255,255,255,.1)",
+					    width: 1,
+					    type: "solid"
+					}    
+				},
+				yAxis: {
+				    type: 'category',
+				    data: ['18级', '19级', '20级', '21级'],
+					//修改字体颜色和大小
+					axisLabel: {
+					    color: "rgba(0,0,0,.6)",
+					    fontSize: "12"
+					},
+				},
+				series: [
+					//每个专业都放进一个数组里
+					{
+						name: '数技',
+						type: 'bar',
+						color:'#313695',
+						stack: 'total',
+						barWidth: "50%",
+						label: {
+							show: true,
+							color:'#ffffff',
+						},
+						emphasis: {
+							focus: 'series'
+						},
+						data: [137, 139, 118, 131]
+				    },{
+						name: '软工',
+						type: 'bar',
+						color:'#4575b4',
+						stack: 'total',
+						barWidth: "50%",
+						label: {
+							show: true,
+							color:'#ffffff',
+						},
+						emphasis: {
+							focus: 'series'
+						},
+						data: [80, 75, 75, 85]
+				    },{
+						name: '网工',
+						type: 'bar',
+						color: '#74add1',
+						stack: 'total',
+						barWidth: "50%",
+						label: {
+							show: true,
+							color:'#ffffff',
+						},
+						emphasis: {
+							focus: 'series'
+						},
+						data: [76, 68, 73, 81]
+				    },{
+						name: '广电',
+						type: 'bar',
+						color:'#fdae61',
+						stack: 'total',
+						barWidth: "50%",
+						label: {
+							show: true,
+							color:'#ffffff',
+						},
+						emphasis: {
+							focus: 'series'
+						},
+						data: [139, 133, 109, 131]
+				    },{
+						name: '电信',
+						type: 'bar',
+						color:'#f46d43',
+						stack: 'total',
+						barWidth: "50%",
+						label: {
+							show: true,
+							color:'#ffffff',
+						},
+						emphasis: {
+							focus: 'series'
+						},
+						data: [52, 48, 71, 0]
+				    },{
+						name: '电科',
+						type: 'bar',
+						color:'#d73027',
+						stack: 'total',
+						barWidth: "50%",
+						label: {
+							show: true,
+							color:'#ffffff',
+						},
+						emphasis: {
+							focus: 'series'
+						},
+						data: [51, 47, 75, 75]
+				    },{
+						name: '通信',
+						type: 'bar',
+						color:'#a50026',
+						stack: 'total',
+						barWidth: "50%",
+						label: {
+							show: true,
+							color:'#ffffff',
+						},
+						emphasis: {
+							focus: 'series'
+						},
+						data: [22,26,0,0]
+					}]
+			};
+			// 使用刚指定的配置项和数据显示图表。
+			myChart1.setOption(option1);
+			//图表适应屏幕
+			window.addEventListener("resize",function(){
+				myChart1.resize();
+			})
+		</script>
+		
+		<script>
+			//初始化变量——饼图
+			var myChart2 = echarts.init(document.getElementById('bing'));//饼图
+			var option2 = {
+				tooltip: {
+					trigger: 'item'
+				},
+				color: [
+				    '#313695',
+				    '#4575b4',
+				    '#74add1',
+				    '#abd9e9',
+				    '#ffffbf',
+				    '#fee090',
+				    '#fdae61',
+				    '#f46d43',
+				    '#d73027',
+				    '#a50026'
+				],
+				legend: {
+					bottom: 0,
+				    itemWidth: 10,
+					itemHeight: 10,
+					textStyle: {
+				        color: "rgba(0,0,0,.5)",
+				        fontSize: "12",
+					}
+				},
+				series: [
+					{name: '民族分布人数',
+					type: 'pie',
+					radius: ['35%', '50%'],
+					avoidLabelOverlap: false,
+					label: {
+						show: false,
+						position: 'center'
+					},
+					//显示中间的字体
+					emphasis: {
+						label: {
+							show: true,
+							fontSize: '40',
+							fontWeight: 'bold'
+						},
+						emphasis: {
+							itemStyle: {
+							    shadowBlur: 10,
+							    shadowOffsetX: 0,
+							    shadowColor: 'rgba(0, 0, 0, 0.5)'
+						    }
+						}
+					},
+					labelLine: {
+						show: false
+					},
+					data: [
+						/*{value:1973,name:'汉族'},*/
+						{value:22,name:'壮族'},
+						{value:16,name:'苗族'},
+						{value:14,name:'回族'},
+						{value:14,name:'土家族'},
+						{value:13,name:'满族'},
+						{value:10,name:'布依族'},
+						{value:11,name:'彝族'},
+						{value:9,name:'侗族'},
+						{value:7,name:'蒙古族'},
+						{value:5,name:'瑶族'},
+						{value:4,name:'白族'},
+						{value:3,name:'维吾尔族'},
+						{value:3,name:'傣族'},
+						{value:2,name:'穿青族'},
+						{value:2,name:'仡佬族'},
+						{value:2,name:'黎族'},
+						{value:1,name:'藏族'},
+						{value:1,name:'拉祜族'},
+						{value:1,name:'哈尼族'},
+						{value:1,name:'纳西族'},
+						{value:1,name:'达族'},
+						{value:1,name:'朝鲜族'},
+						{value:1,name:'哈萨克族'},
+						]	
+					}]	
+						
+				};
+			myChart2.setOption(option2);
+			//图表适应屏幕
+			window.addEventListener("resize",function(){
+				myChart2.resize();
+			})
+		</script>
+		<script>
+			//初始化变量——地图
+			var myChart4 = echarts.init(document.getElementById('map'));//地图		
+		    var option4 = {
+		        title: {},
+		        tooltip: {
+		    		trigger: 'item',
+		    		showDelay: 0,
+		    		transitionDuration: 0.2
+		        },
+		        visualMap: {
+		            type: 'continuous',
+		    		left: 'right',
+		    		min: 1,
+		    		max: 150,
+		    		inRange: {
+		    		  color: [
+		    		    '#313695',
+		    		    '#4575b4',
+		    		    '#74add1',
+		    		    '#e0f3f8',
+		    		    '#fee090',
+		    		    '#fdae61',
+		    		    '#f46d43',
+		    		    '#d73027',
+		    		    '#a50026'
+		    		  ]
+		    		},
+		    		text: ['High', 'Low'],
+		    		calculable: true      
+		        },
+		    	toolbox: {
+		    	    show: true,
+		    	    left: 'left',
+		    	    top: 'top',
+		    	},
+		    	geo: {
+					map: "china",
+					label: {
+						fontSize: 16,
+						emphasis: {
+							show: true,
+							color: '#ffffff'
+						}
+					},
+					// 把中国地图放大了1.2倍
+					zoom: 1.2,
+					roam: true,
+					itemStyle: {
+						normal: {
+							// 地图省份的背景颜色
+							areaColor: "rgba(20, 41, 87,0.6)",
+							borderColor: "#2a84e3",
+							borderWidth: 1
+						},
+						//鼠标放置省份上改变颜色
+						emphasis: {
+							areaColor: '#abd9e9'
+						}
+					}
+		    	},
+		        itemStyle: {
+		            normal: {
+		                areaColor: '#142957'
+		            }
+		        },
+		        series: [{
+		            name: '中国',
+		            type: 'map',
+		    		roam: true,
+		    		map:'china',
+		            geoIndex: 0,
+		            data: [
+						{value:643,name:'浙江'},
+						{value:37,name:'海南'},
+						{value:114,name:'河南'},
+						{value:26,name:'辽宁'},
+						{value:79,name:'广西'},
+						{value:75,name:'山东'},
+						{value:75,name:'江苏'},
+						{value:117,name:'贵州'},
+						{value:81,name:'安徽'},
+						{value:28,name:'重庆'},
+						{value:81,name:'四川'},
+						{value:31,name:'河北'},
+						{value:72,name:'云南'},
+						{value:21,name:'上海'},
+						{value:92,name:'山西'},
+						{value:43,name:'宁夏'},
+						{value:48,name:'江西'},
+						{value:47,name:'福建'},
+						{value:29,name:'吉林'},
+						{value:25,name:'新疆'},
+						{value:33,name:'内蒙古'},
+						{value:2,name:'青海'},
+						{value:25,name:'陕西'},
+						{value:42,name:'湖南'},
+						{value:116,name:'广东'},
+						{value:44,name:'甘肃'},
+						{value:37,name:'湖北'},
+						{value:29,name:'黑龙江'},
+						{value:10,name:'北京'},
+						{value:14,name:'天津'},
+						{value:0,name:'西藏'},
+						{value:0,name:'香港'},
+						{value:0,name:'澳门'},
+						{value:0,name:'台湾'}
+						],
+					}]	
+		
+		    };
+		    myChart4.setOption(option4);
+			//图表适应屏幕
+			window.addEventListener("resize",function(){
+				myChart4.resize();
+			})	  
+		</script>
+		
+		<script>
+			var myChart5 = echarts.init(document.getElementById('ci'));//词云图
+			var jsonlist=[
+				{"name":"张","value":144},
+				{"name":"王","value":140},
+				{"name":"李","value":134},
+				{"name":"陈","value":93},
+				{"name":"刘","value":86},
+				{"name":"杨","value":66},
+				{"name":"黄","value":55},
+				{"name":"周","value":53},
+				{"name":"赵","value":49},
+				{"name":"吴","value":47},
+				{"name":"徐","value":32},
+				{"name":"马","value":32},
+				{"name":"郑","value":30},
+				{"name":"朱","value":29},
+				{"name":"孙","value":27},
+				{"name":"林","value":26},
+				{"name":"胡","value":23},
+				{"name":"高","value":22},
+				{"name":"宋","value":21},
+				{"name":"梁","value":20},
+				{"name":"何","value":19},
+				{"name":"潘","value":18},
+				{"name":"侯","value":17},
+				{"name":"许","value":16},
+				{"name":"曹","value":15},
+				{"name":"杜","value":15},
+				{"name":"曾","value":14},
+				{"name":"余","value":14},
+				{"name":"郭","value":14},
+				{"name":"沈","value":14},
+				{"name":"罗","value":14},
+				{"name":"陆","value":13},
+				{"name":"丁","value":13},
+				{"name":"叶","value":13},
+				{"name":"冯","value":13},
+				{"name":"金","value":13},
+				{"name":"韩","value":13},
+				{"name":"袁","value":13},
+				{"name":"吕","value":12},
+				{"name":"蔡","value":12},
+				{"name":"汪","value":12},
+				{"name":"唐","value":12},
+				{"name":"卢","value":11},
+				{"name":"谢","value":11},
+				{"name":"章","value":11},
+				{"name":"范","value":11},
+				{"name":"蒋","value":11},
+				{"name":"毛","value":11},
+				{"name":"邓","value":11},
+				{"name":"苏","value":11},
+				{"name":"田","value":10},
+				{"name":"姜","value":10},
+				{"name":"陶","value":10},
+				{"name":"方","value":10},
+				{"name":"邵","value":9},
+				{"name":"廖","value":9},
+				{"name":"于","value":9},
+				{"name":"邹","value":9},
+				{"name":"薛","value":9},
+				{"name":"肖","value":8},
+				{"name":"史","value":8},
+				{"name":"俞","value":8},
+				{"name":"彭","value":8},
+				{"name":"邱","value":8},
+				{"name":"熊","value":8},
+				{"name":"顾","value":8},
+				{"name":"万","value":8},
+				{"name":"白","value":7},
+				{"name":"石","value":7},
+				{"name":"钟","value":7},
+				{"name":"姚","value":7},
+				{"name":"钱","value":7},
+				{"name":"董","value":7},
+				{"name":"颜","value":7},
+				{"name":"温","value":6},
+				{"name":"任","value":6},
+				{"name":"严","value":6},
+				{"name":"庞","value":6},
+				{"name":"崔","value":6},
+				{"name":"魏","value":6},
+				{"name":"葛","value":6},
+				{"name":"雷","value":6},
+				{"name":"闫","value":6},
+				{"name":"欧","value":6},
+				{"name":"秦","value":6},
+				{"name":"汤","value":6},
+				{"name":"赖","value":5},
+				{"name":"江","value":5},
+				{"name":"安","value":5},
+				{"name":"武","value":5},
+				{"name":"戴","value":5},
+				{"name":"夏","value":5},
+				{"name":"甘","value":5},
+				{"name":"牛","value":5},
+				{"name":"骆","value":5},
+				{"name":"付","value":5},
+				{"name":"施","value":5},
+				{"name":"贾","value":4},
+				{"name":"龙","value":4},
+				{"name":"樊","value":4},
+				{"name":"郝","value":4},
+				{"name":"洪","value":4},
+				{"name":"成","value":4},
+				{"name":"涂","value":4},
+				{"name":"程","value":4},
+				{"name":"覃","value":4},
+				{"name":"褚","value":4},
+				{"name":"关","value":4},
+				{"name":"柴","value":3},
+				{"name":"耿","value":3},
+				{"name":"应","value":3},
+				{"name":"包","value":3},
+				{"name":"毕","value":3},
+				{"name":"孔","value":3},
+				{"name":"诸","value":3},
+				{"name":"滕","value":3},
+				{"name":"尹","value":3},
+				{"name":"倪","value":3},
+				{"name":"祝","value":3},
+				{"name":"韦","value":3},
+				{"name":"黎","value":3},
+				{"name":"文","value":3},
+				{"name":"孟","value":3},
+				{"name":"虞","value":3},
+				{"name":"康","value":3},
+				{"name":"尤","value":3},
+				{"name":"屈","value":3},
+				{"name":"司","value":3},
+				{"name":"岑","value":3},
+				{"name":"莫","value":3},
+				{"name":"储","value":3},
+				{"name":"纪","value":2},
+				{"name":"娄","value":2},
+				{"name":"申","value":2},
+				{"name":"卫","value":2},
+				{"name":"童","value":2},
+				{"name":"柳","value":2},
+				{"name":"段","value":2},
+				{"name":"栗","value":2},
+				{"name":"常","value":2},
+				{"name":"向","value":2},
+				{"name":"傅","value":2},
+				{"name":"阮","value":2},
+				{"name":"符","value":2},
+				{"name":"易","value":2},
+				{"name":"龚","value":2},
+				{"name":"华","value":2},
+				{"name":"贺","value":2},
+				{"name":"谭","value":2},
+				{"name":"单","value":2},
+				{"name":"路","value":2},
+				{"name":"农","value":2},
+				{"name":"冷","value":2},
+				{"name":"宁","value":2},
+				{"name":"尚","value":2},
+				{"name":"齐","value":2},
+				{"name":"辛","value":2},
+				{"name":"苗","value":2},
+				{"name":"平","value":2},
+				{"name":"桑","value":2},
+				{"name":"季","value":2},
+				{"name":"阳","value":2},
+				{"name":"翁","value":2},
+				{"name":"茆","value":1},
+				{"name":"阙","value":1},
+				{"name":"旷","value":1},
+				{"name":"柯","value":1},
+				{"name":"宓","value":1},
+				{"name":"闻","value":1},
+				{"name":"丛","value":1},
+				{"name":"甄","value":1},
+				{"name":"查","value":1},
+				{"name":"闵","value":1},
+				{"name":"匡","value":1},
+				{"name":"轩","value":1},
+				{"name":"聂","value":1},
+				{"name":"厉","value":1},
+				{"name":"南","value":1},
+				{"name":"竺","value":1},
+				{"name":"支","value":1},
+				{"name":"巢","value":1},
+				{"name":"崇","value":1},
+				{"name":"楼","value":1},
+				{"name":"邢","value":1},
+				{"name":"盖","value":1},
+				{"name":"豆","value":1},
+				{"name":"冉","value":1},
+				{"name":"桂","value":1},
+				{"name":"计","value":1},
+				{"name":"幸","value":1},
+				{"name":"蔚","value":1},
+				{"name":"操","value":1},
+				{"name":"乔","value":1},
+				{"name":"容","value":1},
+				{"name":"鄢","value":1},
+				{"name":"畅","value":1},
+				{"name":"戚","value":1},
+				{"name":"迟","value":1},
+				{"name":"花","value":1},
+				{"name":"邬","value":1},
+				{"name":"印","value":1},
+				{"name":"岳","value":1},
+				{"name":"矫","value":1},
+				{"name":"邸","value":1},
+				{"name":"管","value":1},
+				{"name":"普","value":1},
+				{"name":"杞","value":1},
+				{"name":"谷","value":1},
+				{"name":"展","value":1},
+				{"name":"兰","value":1},
+				{"name":"缑","value":1},
+				{"name":"吉","value":1},
+				{"name":"鲍","value":1},
+				{"name":"喻","value":1},
+				{"name":"訾","value":1},
+				{"name":"雍","value":1},
+				{"name":"羊","value":1},
+				{"name":"蓝","value":1},
+				{"name":"凌","value":1},
+				{"name":"卓","value":1},
+				{"name":"翟","value":1},
+				{"name":"揭","value":1},
+				{"name":"佘","value":1},
+				{"name":"牟","value":1},
+				{"name":"布","value":1},
+				{"name":"房","value":1},
+				{"name":"祁","value":1},
+				{"name":"裘","value":1},
+				{"name":"郁","value":1},
+				{"name":"但","value":1},
+				{"name":"代","value":1},
+				{"name":"凃","value":1},
+				{"name":"伍","value":1},
+				{"name":"巫","value":1},
+				{"name":"屠","value":1},
+				{"name":"明","value":1},
+				{"name":"麻","value":1},
+				{"name":"乐","value":1},
+				{"name":"边","value":1},
+				{"name":"鹿","value":1},
+				{"name":"隋","value":1},
+				{"name":"靳","value":1},
+				{"name":"臧","value":1},
+				{"name":"於","value":1},
+				{"name":"庄","value":1},
+				{"name":"舒","value":1},
+				{"name":"艾","value":1},
+				{"name":"曲","value":1},
+				{"name":"蒙","value":1}
+			];
+			
+			var option5 = {
+				title:{},
+				tooltip: {},
+				series: [ {
+				    type: 'wordCloud',
+				    //词云不是官方echarts的功能，在 https://github.com/ecomfe/echarts-wordcloud 可以查看完整的技术文档说明
+				    gridSize: 1,
+				    rotationRange:[0,0],
+				    sizeRange: [15, 55],
+				    rotationRange: [-90, 90],
+				    width: 600,
+				    height: 400,
+				    textStyle: {
+				        color: function () {
+							return 'rgb(' + [
+							    Math.round(Math.random() * 200),
+							    Math.round(Math.random() * 120),
+							    Math.round(Math.random() * 250)
+							].join(',') +')';
+						}
+					},
+				    emphasis: {
+				        textStyle: {
+				            shadowBlur: 10,
+				            shadowColor: '#333'
+				        }
+				    },
+				    shape:"square",
+				    data: jsonlist //传入数据
+				} ]
+			};
+			
+			myChart5.setOption(option5);//初始化变量——词云图
+			//图表适应屏幕
+			window.addEventListener("resize",function(){
+				myChart5.resize();
+			})
+		</script>
+		
+		<script>
+		//初始化变量——关系图
+		var nodes=[];//记录结点
+		var links=[];//记录关联
+		var N=[];//记录名字
+		var L=[];//记录辅导员
+		var T=[];//记录老师
+		var characterData=[
+			{"name":"18广播电视工程（中广班）","leader":"罗.J","teacher":"冯.HM","class":18},
+			{"name":"18广播电视工程1班","leader":"罗.J","teacher":"周.ZX","class":18},
+			{"name":"18广播电视工程2班","leader":"罗.J","teacher":"张.X","class":18},
+			{"name":"18广播电视工程3班","leader":"罗.J","teacher":"蔡.YM","class":18},
+			{"name":"18电子科学与技术1班","leader":"罗.J","teacher":"关.DW","class":18},
+			{"name":"18电子科学与技术2班","leader":"罗.J","teacher":"郭.XY","class":18},
+			{"name":"18电子信息工程1班","leader":"罗.J","teacher":"覃.ZY","class":18},
+			{"name":"18电子信息工程2班","leader":"罗.J","teacher":"许.YN","class":18},
+			{"name":"18网络工程1班","leader":"杨.B","teacher":"瞿.YT","class":18},
+			{"name":"18网络工程2班","leader":"杨.B","teacher":"俞.DG","class":18},
+			{"name":"18软件工程1班","leader":"杨.B","teacher":"吉.NY","class":18},
+			{"name":"18软件工程2班","leader":"杨.B","teacher":"赵.ZG","class":18},
+			{"name":"18通信工程班","leader":"罗.J","teacher":"钱.GP","class":18},
+			{"name":"18数字媒体技术1班","leader":"杨.B","teacher":"贾.XW","class":18},
+			{"name":"18数字媒体技术2班","leader":"杨.B","teacher":"赵.YB","class":18},
+			{"name":"18数字媒体技术3班","leader":"杨.B","teacher":"赵.M","class":18},
+			{"name":"19广播电视工程（中广班）","leader":"陈.C","teacher":"金.ZF","class":19},
+			{"name":"19广播电视工程1班","leader":"陈.C","teacher":"谢.H","class":19},
+			{"name":"19广播电视工程2班","leader":"陈.C","teacher":"徐.ZQ","class":19},
+			{"name":"19广播电视工程3班","leader":"陈.C","teacher":"顾.J","class":19},
+			{"name":"19电子科学与技术班","leader":"陈.C","teacher":"张.XH","class":19},
+			{"name":"19电子信息工程班","leader":"陈.C","teacher":"王.Z","class":19},
+			{"name":"19网络工程1班","leader":"张.F","teacher":"王.HQ","class":19},
+			{"name":"19网络工程2班","leader":"张.F","teacher":"张.Fan","class":19},
+			{"name":"19软件工程1班","leader":"张.F","teacher":"杨.H","class":19},
+			{"name":"19软件工程2班","leader":"张.F","teacher":"罗.ZQ","class":19},
+			{"name":"19通信工程班","leader":"陈.C","teacher":"刘.Z","class":19},
+			{"name":"19数字媒体技术1班","leader":"张.F","teacher":"李.XX","class":19},
+			{"name":"19数字媒体技术2班","leader":"张.F","teacher":"王.BC","class":19},
+			{"name":"19数字媒体技术3班","leader":"张.F","teacher":"裘.SP","class":19},
+			{"name":"20广播电视工程1班","leader":"李.LQ","teacher":"田.QH","class":20},
+			{"name":"20广播电视工程2班","leader":"李.LQ","teacher":"陆.Q","class":20},
+			{"name":"20广播电视工程3班","leader":"李.LQ","teacher":"穆.SS","class":20},
+			{"name":"20电子科学与技术1班","leader":"李.LQ","teacher":"褚.SW","class":20},
+			{"name":"20电子科学与技术2班","leader":"李.LQ","teacher":"张.HB","class":20},
+			{"name":"20电子信息工程1班","leader":"李.LQ","teacher":"常.C","class":20},
+			{"name":"20电子信息工程2班","leader":"李.LQ","teacher":"林.SY","class":20},
+			{"name":"20网络工程1班","leader":"丁.XF","teacher":"张.LF","class":20},
+			{"name":"20网络工程2班","leader":"丁.XF","teacher":"栗.QS","class":20},
+			{"name":"20软件工程1班","leader":"丁.XF","teacher":"秦.AH","class":20},
+			{"name":"20软件工程2班","leader":"丁.XF","teacher":"莫.XM","class":20},
+			{"name":"20数字媒体技术1班","leader":"丁.XF","teacher":"张.XP","class":20},
+			{"name":"20数字媒体技术2班","leader":"丁.XF","teacher":"蔡.XY","class":20},
+			{"name":"20数字媒体技术3班","leader":"丁.XF","teacher":"沈.XW","class":20},
+			{"name":"21大数据1班","leader":"冯.LQ","teacher":"孙.XX","class":21},
+			{"name":"21大数据2班","leader":"冯.LQ","teacher":"陈.L","class":21},
+			{"name":"21广播电视工程1班","leader":"娄.MY","teacher":"张.Yun","class":21},
+			{"name":"21广播电视工程2班","leader":"娄.MY","teacher":"肖.MB","class":21},
+			{"name":"21广播电视工程3班","leader":"娄.MY","teacher":"梁.HB","class":21},
+			{"name":"21网络工程1班","leader":"冯.LQ","teacher":"张.BJ","class":21},
+			{"name":"21网络工程2班","leader":"冯.LQ","teacher":"张.BJ","class":21},
+			{"name":"21数字媒体技术1班","leader":"冯.LQ","teacher":"张.SY","class":21},
+			{"name":"21数字媒体技术2班","leader":"冯.LQ","teacher":"王.YQ","class":21},
+			{"name":"21数字媒体技术3班","leader":"冯.LQ","teacher":"张.Yuan","class":21},
+			{"name":"21演艺工程1班","leader":"娄.MY","teacher":"钱.X.L","class":21},
+			{"name":"21演艺工程2班","leader":"娄.MY","teacher":"钱.X.L","class":21}
+		
+		];
+		/*----------------------处理结点数据nodes------------------------*/
+		for(var type in characterData){	//for-in遍历，name值为{key:value}中的key
+			
+			if(N.indexOf(characterData[type]['name'])==-1)//判断节点是否会重复
+			{
+				N.push(characterData[type]['name']); //增加新的（不重复的类型）
+				//将类别作为一种node，push到nodes列表，用于物种的聚类呈现
+				nodes.push({
+					name:characterData[type]['name'],
+					grade:characterData[type]['class'],
+					category:characterData[type]['class']-18+1,
+					value:'班级：'+characterData[type]['name'],
+					symbolSize:20,
+					label:{
+						//是否显示名字
+						show:false
+					}
+				});
+			}
+		
+			if(L.indexOf(characterData[type]['leader'])==-1)
+			{
+				L.push(characterData[type]['leader']);
+				nodes.push({
+					name:characterData[type]['leader'],
+					category:0,
+					value:'辅导员：'+characterData[type]['leader']+'辅导员',
+					symbolSize:50,
+					label:{
+						show:true
+					}
+				});	
+			}
+			
+			if(T.indexOf(characterData[type]['teacher'])==-1)
+			{
+				T.push(characterData[type]['teacher']);
+				nodes.push({
+					name:characterData[type]['teacher'],
+					category:5,
+					value:'班主任：'+characterData[type]['teacher']+'老师',
+					symbolSize:40,
+					label:{
+						show:true
+					}
+				});
+			}
+			
+			/*----------------------处理关系数据links------------------------*/
+			//处理关系
+			links.push({
+				source:characterData[type]['name'],
+				target:characterData[type]['leader'],
+				value:1,	
+			});
+			links.push({
+				source:characterData[type]['teacher'],
+				target:characterData[type]['name'],
+				value:1
+			});	
+		
+		}
+		
+		var myChart6 = echarts.init(document.getElementById('gx'));//词云图
+		var categories=[];
+		var selected={};
+		//设置上方可以选择的节点
+		categories.push({
+			name:'辅导员'
+		})
+		for (var l=18;l<22;l++){
+			categories.push({
+				//年纪的节点
+				name:l.toString()
+			})
+		}
+		categories.push({
+			name:'班主任'
+		})
+		
+		var option6 = {
+		    tooltip: {},
+			color: [
+			    '#313695',
+			    '#4575b4',
+			    '#74add1',
+			    '#fdae61',
+			    '#f46d43',
+			    '#d73027'
+			    
+			],
+		    legend: [{
+				data: categories,
+				selected:selected,
+				selector: true //开启全选和反选按钮
+			}],
+			animationDurationUpdate: 1500,
+			animationEasingUpdate: 'quinticInOut',
+		    series: [
+		    {
+		        type: 'graph',
+		        layout: 'force',//选择力导向图，因为我们的关系数据没有x,y坐标
+		        data: nodes,//传入结点数据
+		        links: links,//传入关系数据
+		        categories: categories,
+		        edgeSymbol: ['circle', 'arrow'],
+		        edgeSymbolSize : 5,
+		        roam: true,//是否开启鼠标滚轮缩放
+		        label: {
+					position: 'inside',
+					formatter: '{b}'
+		        },
+				labelLayout: {//标签重叠
+					hideOverlap: true
+				},
+				scaleLimit: {//所属组件的z分层，z值小的图形会被z值大的图形覆盖
+					min: 0.7,
+					max: 2
+				},
+		        lineStyle: {//连接线的设置
+					color: 'target',
+					curveness: 0.1,
+		            width: 1
+		        },
+		        force: {
+					repulsion: 50,//节点之间的斥力因子。支持数组表达斥力范围，值越大斥力越大。
+					gravity :0.1,//节点受到的向中心的引力因子。该值越大节点越往中心点靠拢。
+					edgeLength: [40, 50]//边的两个节点之间的距离
+		        }, 
+		        emphasis: {
+					focus: 'adjacency',
+					lineStyle: {
+						width: 10
+					}
+		        },
+				edgeLabel: {
+				    normal: {
+				        textStyle: {
+				            fontSize: 20
+				        }
+				    }
+				}
+		    }]
+		};
+				
+		myChart6.setOption(option6);
+		//图表适应屏幕
+		window.addEventListener("resize",function(){
+		 	myChart6.resize();
+		})
+		</script>
+	</body>
+</html>

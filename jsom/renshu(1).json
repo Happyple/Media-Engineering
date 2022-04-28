@@ -1,0 +1,29 @@
+{
+	"peopleData":[
+		{"grade":"21","profession":电科","Value":75},
+		{"grade":"21","profession":软工","Value":85},
+		{"grade":"21","profession":网工","Value":81},
+		{"grade":"21","profession":广电","Value":131},
+		{"grade":"21","profession":数技","Value":131},
+		{"grade":"20","profession":电信","Value":71},
+		{"grade":"20","profession":电科","Value":75},
+		{"grade":"20","profession":软工","Value":75},
+		{"grade":"20","profession":网工","Value":73},
+		{"grade":"20","profession":广电","Value":109},
+		{"grade":"20","profession":数技","Value":118},
+		{"grade":"19","profession":通信","Value":26},
+		{"grade":"19","profession":电信","Value":48},
+		{"grade":"19","profession":电科","Value":47},
+		{"grade":"19","profession":软工","Value":75},
+		{"grade":"19","profession":网工","Value":68},
+		{"grade":"19","profession":广电","Value":133},
+		{"grade":"19","profession":数技","Value":139},
+		{"grade":"18","profession":通信","Value":22},
+		{"grade":"18","profession":电信","Value":52},
+		{"grade":"18","profession":电科","Value":51},
+		{"grade":"18","profession":软工","Value":80},
+		{"grade":"18","profession":网工","Value":76},
+		{"grade":"18","profession":广电","Value":139},
+		{"grade":"18","profession":数技","Value":137}
+	]
+}
